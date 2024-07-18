@@ -28,11 +28,11 @@ To get a local copy of the project up and running, follow these simple steps.
 
 1. Clone the repository
    ```sh
-   git clone https://github.com/your-username/bulletpoint-website.git
+   git clone https://github.com/BulletPointDevelopment/bulletpoint.dev
    ```
 2. Navigate to the project directory
    ```sh
-   cd bulletpoint-website
+   cd bulletpoint-dev
    ```
 3. Install NPM packages
    ```sh
