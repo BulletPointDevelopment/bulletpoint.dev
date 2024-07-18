@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletpoint: The Next Generation Gun Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: #0d0d0d;
+            color: #e7e7f7;
+            overflow-x: hidden;
+            display: none; /* Initially hidden for animation */
+        }
+
+        header {
+            background-color: #ff3333;
+            padding: 1em 2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid #ffdd57;
+            border-radius: 0 0 15px 15px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 1em;
+        }
+
+        nav ul li a {
+            color: #e7e7f7;
+            text-decoration: none;
+            font-size: 1.2em;
+            position: relative;
+            padding: 0.5em 0;
+            transition: color 0.3s ease;
+            border-radius: 8px;
+        }
+
+        nav ul li a:hover,
+        nav ul li.active a {
+            color: #ffdd57;
+            background-color: #660000;
+            padding: 0.5em 1em;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ffdd57;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            border-radius: 8px;
+        }
+
+        nav ul li a:hover::before,
+        nav ul li.active a::before {
+            visibility: visible;
+            width: 100%;
+        }
+
+        .search-container {
+            margin-right: 1em;
+        }
+
+        .search-container input {
+            padding: 0.5em;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .search-container input:focus {
+            background-color: #e7e7f7;
+            color: #000;
+            transform: scale(1.05);
+            outline: none;
+        }
+
+        main {
+            padding: 8em 2em 2em 2em;
+            text-align: center;
+        }
+
+        .intro {
+            margin-bottom: 2em;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .intro h1 {
+            font-size: 3em;
+            margin: 0;
+            color: #ff3333;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .intro p {
+            font-size: 1.5em;
+            margin: 0;
+            color: #ffdd57;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .features {
+            animation: fadeIn 2s ease-out 1s;
+        }
+
+        .features h2 {
+            font-size: 2.5em;
+            color: #ff3333;
+            margin-bottom: 1em;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features ul li {
+            background-color: #660000;
+            margin: 0.5em 0;
+            padding: 1em;
+            border-radius: 15px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            animation: slideIn 0.5s ease forwards;
+            text-align: left;
+            position: relative;
+            color: #e7e7f7;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .features ul li:hover {
+            background-color: #ffdd57;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .features ul li:before {
+            content: '🔥';
+            position: absolute;
+            left: -2em;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2em;
+            transition: transform 0.3s ease;
+        }
+
+        .features ul li:hover:before {
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        footer {
+            background-color: #ff3333;
+            text-align: center;
+            padding: 1em;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            border-top: 3px solid #ffdd57;
+            border-radius: 15px 15px 0 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Bullet Explosion Animation */
+        #explosion-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .bullet {
+            width: 50px;
+            height: 20px;
+            background: gray;
+            border-radius: 10px;
+            position: absolute;
+            animation: shoot 1s forwards;
+        }
+
+        @keyframes shoot {
+            0% {
+                left: -100px;
+                top: 50%;
+            }
+            50% {
+                left: 50%;
+                top: 50%;
+                width: 100px;
+                height: 40px;
+            }
+            100% {
+                left: 100%;
+                top: 50%;
+                opacity: 0;
+                width: 200px;
+                height: 80px;
+            }
+        }
+
+        .explosion {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,0,0,1) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            animation: explode 0.5s forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(5);
+                opacity: 0;
+            }
+        }
+
+        .about {
+            text-align: left;
+            margin: 2em auto;
+            max-width: 800px;
+            background-color: #660000;
+            padding: 1.5em;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .about h2 {
+            color: #ffdd57;
+            margin-top: 0;
+        }
+
+        .about p {
+            color: #e7e7f7;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div id="explosion-container">
+        <div class="bullet"></div>
+        <div class="explosion"></div>
+    </div>
+    <header>
+        <nav>
+            <ul>
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="https://discord.gg/drmhmG5W">Discord</a></li>
+            </ul>
+        </nav>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search...">
+        </div>
+    </header>
+    <main>
+        <section class="intro">
+            <h1>Welcome to Bulletpoint</h1>
+            <p>The Next Generation Gun Game</p>
+        </section>
+        <section class="about">
+            <h2>About Bulletpoint</h2>
+            <p>
+                In the dynamic landscape of gaming, "BulletPoint" emerges as a compelling choice for both seasoned gamers and newcomers alike. This game offers an immersive gameplay experience that combines intense action with strategic decision-making. Unlike traditional games, "BulletPoint" introduces innovative mechanics that challenge conventional gameplay norms, ensuring you are always engaged. The stunning visuals and meticulously crafted sound design elevate the overall gaming experience, setting a new standard for visual and auditory excellence. Join a vibrant community and enjoy continuous updates and support from the developers. Whether you're seeking adventure, strategy, or a visually stunning escape, "BulletPoint" promises to deliver an unforgettable journey into the world of gaming excellence.
+            </p>
+        </section>
+        <section class="features">
+            <h2>Innovative Features</h2>
+            <ul>
+                <li>Realistic Physics and Ballistics</li>
+                <li>Dynamic Environment Interaction</li>
+                <li>Customizable Weapons</li>
+                <li>Adaptive AI</li>
+                <li>Advanced Sound Design</li>
+                <li>Tactical Team Play</li>
+                <li>Virtual Reality Support</li>
+                <li>Augmented Reality Integration</li>
+                <li>Live Events and Updates</li>
+                <li>Community Features</li>
+            </ul>
+        </section>
+    </main>
+    <headr>
+          <center>&copy; 2024 Bulletpoint. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const features = document.querySelectorAll('.features ul li');
+            features.forEach(function(feature) {
+                const text = feature.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    feature.style.display = 'block';
+                } else {
+                    feature.style.display = 'none';
+                }
+            });
+        });
+
+        // Show the page after the explosion animation
+        setTimeout(() => {
+            document.getElementById('explosion-container').style.display = 'none';
+            document.body.style.display = 'block';
+        }, 1500);
+    </script>
+</body>
+</html>
